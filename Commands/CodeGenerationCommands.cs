@@ -14,7 +14,7 @@ namespace Szmyd.CodeGeneration.Commands
     public class CodeGenerationCommands : DefaultOrchardCommandHandler
     {
         private readonly IExtensionManager _extensionManager;
-        private const string DirPrefix = "Test/"; 
+        private const string DirPrefix = ""; 
 
         private static readonly IDictionary<string, TemplateInfo> _filesInfo = new Dictionary<string, TemplateInfo> {
             {"PartHandler",     new TemplateInfo {Name = "$$PartName$$Handler.cs", Dir = "Handlers/", IsCompiled = true}}, 
