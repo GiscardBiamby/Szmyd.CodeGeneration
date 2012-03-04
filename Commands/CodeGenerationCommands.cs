@@ -14,14 +14,16 @@ namespace Szmyd.CodeGeneration.Commands
     public class CodeGenerationCommands : DefaultOrchardCommandHandler
     {
         private readonly IExtensionManager _extensionManager;
+        private const string DirPrefix = "Test/"; 
 
         private static readonly IDictionary<string, TemplateInfo> _filesInfo = new Dictionary<string, TemplateInfo> {
             {"PartHandler",     new TemplateInfo {Name = "$$PartName$$Handler.cs", Dir = "Handlers/", IsCompiled = true}}, 
             {"PartDriver",      new TemplateInfo {Name = "$$PartName$$Driver.cs", Dir = "Drivers/", IsCompiled = true}},
             {"PartModel",       new TemplateInfo {Name = "$$PartName$$.cs", Dir = "Models/", IsCompiled = true}},
+            {"PartViewModel",   new TemplateInfo {Name = "Edit$$PartName$$ViewModel.cs", Dir = "ViewModels/", IsCompiled = true}},
             {"PartRecord",      new TemplateInfo {Name = "$$PartName$$Record.cs", Dir = "Models/", IsCompiled = true}},
             {"PartDisplayShape",new TemplateInfo {Name = "$$PartShapeFileName$$.cshtml", Dir = "Views/Parts/", IsCompiled = false}},
-            {"PartEditorShape", new TemplateInfo {Name = "$$PartShapeFileName$$.cshtml", Dir = "Views/EditorTemplates/Parts/", IsCompiled = false}}
+            {"PartEditorShape", new TemplateInfo {Name = "$$PartShapeFileName$$.Edit.cshtml", Dir = "Views/EditorTemplates/Parts/", IsCompiled = false}}
         };
 
         private static readonly IDictionary<string, TemplateInfo> _settingsFilesInfo = new Dictionary<string, TemplateInfo> {
@@ -31,8 +33,7 @@ namespace Szmyd.CodeGeneration.Commands
 
         private static readonly string _templatePath = HostingEnvironment.MapPath("~/Modules/Szmyd.CodeGeneration/Templates/");
 
-        public CodeGenerationCommands(IExtensionManager extensionManager)
-        {
+        public CodeGenerationCommands(IExtensionManager extensionManager) {
             _extensionManager = extensionManager;
         }
 
@@ -60,10 +61,8 @@ namespace Szmyd.CodeGeneration.Commands
             + "/ForFeature - specify the feature to which your part has to be assigned to (if any)")]
         [CommandName("codegen part")]
         [OrchardSwitches("Properties, ShapeFile, AttachTo, ForFeature")]
-        public void CreatePart(string moduleName, string partName)
-        {
+        public void CreatePart(string moduleName, string partName) {
             Context.Output.WriteLine(T("Creating content part {0} in module {1}", partName, moduleName));
-
             var extensionDescriptor = _extensionManager.GetExtension(moduleName);
 
             if (extensionDescriptor == null)
@@ -83,7 +82,8 @@ namespace Szmyd.CodeGeneration.Commands
                 {"PartShapeFileName", shapeFileName},
                 {"PartShapeName", "Parts_" + shapeName},
                 {"PartFeatureAttribute", featureAttribute},
-                {"PartActivatingFilter", partActivatingFilter}
+                {"PartActivatingFilter", partActivatingFilter},
+                {"EditViewModelName", string.Format(@"Edit{0}ViewModel",partName) }
             };
 
             var extensionFolder = IsTheme ? "~/Themes" : "~/Modules";
@@ -100,16 +100,58 @@ namespace Szmyd.CodeGeneration.Commands
                         .Select(s => s.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries))
                         .Select(s => new KeyValuePair<string, string>(s[0].Trim(), s[1].Trim()));
 
-                var modelProps = properties.Aggregate("", (current, s) =>
-                    current + FillTemplate("PartModelProperty", new Dictionary<string, string> { { "PropertyName", s.Key }, { "PropertyType", s.Value } }));
-                var recordProps = properties.Aggregate("", (current, s) =>
-                    current + FillTemplate("PartRecordProperty", new Dictionary<string, string> { { "PropertyName", s.Key }, { "PropertyType", s.Value } }));
-                var editorShapeFields = properties.Aggregate("", (current, s) =>
-                    current + FillTemplate("PartEditorShapeFormField", new Dictionary<string, string> { { "PropertyName", s.Key }, { "PropertyType", s.Value } }));
+                var modelProps = properties.Aggregate(""
+                    , (current, s) =>
+                        current + FillTemplate("PartModelProperty", new Dictionary<string, string> { { "PropertyName", s.Key }, { "PropertyType", s.Value } })
+                );
+                var recordProps = properties.Aggregate(""
+                    , (current, s) =>
+                        current + FillTemplate("PartRecordProperty", new Dictionary<string, string> { { "PropertyName", s.Key }, { "PropertyType", s.Value } })
+                );
+                var editorShapeFields = properties.Aggregate(""
+                    , (current, s) =>
+                        current + FillTemplate("PartEditorShapeFormField", new Dictionary<string, string> { { "PropertyName", s.Key }, { "PropertyType", s.Value } })
+                );
+                var driverImportingProps = properties.Aggregate(""
+                    , (current, s) =>
+                        current + FillTemplate(
+                            "PartDriverImportingProperty"
+                            , new Dictionary<string, string> { 
+                                { "PropertyName", s.Key }
+                                , { "PropertyType", s.Value }
+                                , { "PropertyValueImporting", DriverPropertySettings.GetPropertyValueImporting(s.Value) } 
+                            }
+                        )
+                );
+                var driverExportingProps = properties.Aggregate(""
+                    , (current, s) =>
+                        current + FillTemplate(
+                            "PartDriverExportingProperty"
+                            , new Dictionary<string, string> { { "PropertyName", s.Key }, { "PropertyType", s.Value } }
+                        )
+                );
+                var driverBuildVMProps = properties.Aggregate(""
+                    , (current, s) =>
+                        current + FillTemplate(
+                            "PartDriverBuildViewModelProperty"
+                            , new Dictionary<string, string> { { "PropertyName", s.Key }, { "PropertyType", s.Value }}
+                        )
+                );
+                var driverEditorMapVMProps = properties.Aggregate(""
+                    , (current, s) =>
+                        current + FillTemplate(
+                            "PartDriverEditorMapViewModelProperty"
+                            , new Dictionary<string, string> { { "PropertyName", s.Key }, { "PropertyType", s.Value }}
+                        )
+                );
 
                 replacements.Add("PartModelProperties", modelProps);
                 replacements.Add("PartRecordProperties", recordProps);
                 replacements.Add("PartEditorShapeFormFields", editorShapeFields);
+                replacements.Add("PartDriverPropertiesImporting", driverImportingProps);
+                replacements.Add("PartDriverPropertiesExporting", driverExportingProps);
+                replacements.Add("PartDriverBuildViewModelProperties", driverBuildVMProps);
+                replacements.Add("PartDriverEditorMapViewModelProperties", driverEditorMapVMProps);
             }
             catch (Exception)
             {
@@ -120,29 +162,34 @@ namespace Szmyd.CodeGeneration.Commands
             foreach (var kv in _filesInfo)
             {
                 // Prepare templated file names
-                kv.Value.Name = replacements.Aggregate(kv.Value.Name,
-                    (current, s) => current.Replace(String.Format("$${0}$$", s.Key), s.Value));
+                kv.Value.Name = replacements.Aggregate(
+                    kv.Value.Name
+                    , (current, s) => current.Replace(String.Format("$${0}$$", s.Key), s.Value)
+                );
 
-                var dirPath = HostingEnvironment.MapPath(extensionFolder + "/" + extensionDescriptor.Id + "/" + kv.Value.Dir);
-                var filePath = HostingEnvironment.MapPath(extensionFolder + "/" + extensionDescriptor.Id + "/" + kv.Value.Dir + kv.Value.Name);
-                if (!Directory.Exists(dirPath)) Directory.CreateDirectory(dirPath);
-                if (File.Exists(filePath))
+                var dirPath = HostingEnvironment.MapPath(extensionFolder + "/" + extensionDescriptor.Id + "/" + DirPrefix + kv.Value.Dir);
+                var filePath = HostingEnvironment.MapPath(extensionFolder + "/" + extensionDescriptor.Id + "/" + DirPrefix + kv.Value.Dir + kv.Value.Name);
+                
+                if (!Directory.Exists(dirPath)) {
+                    Directory.CreateDirectory(dirPath);
+                }
+                if (File.Exists(filePath)) {
                     throw new OrchardException(T("{2} for {0} already exists in target module {1}.",
                         partName, moduleName, kv.Key));
-
+                }
             }
 
             // Generating files from templates
             foreach (var kv in _filesInfo)
             {
-                var outputPath = HostingEnvironment.MapPath(extensionFolder + "/" + extensionDescriptor.Id + "/" + kv.Value.Dir + kv.Value.Name);
+                var outputPath = HostingEnvironment.MapPath(extensionFolder + "/" + extensionDescriptor.Id + "/" + DirPrefix + kv.Value.Dir + kv.Value.Name);
                 FillTemplateAndCreateFile(kv.Key, outputPath, replacements);
                 AddToModuleProject(kv.Value.Dir + kv.Value.Name, csProjPath, kv.Value.IsCompiled);
                 Context.Output.WriteLine(T("{1} for {0} created successfully", partName, kv.Key));
             }
 
             // Refreshing placement.info file
-            var placementPath = HostingEnvironment.MapPath(extensionFolder + "/" + extensionDescriptor.Id + "/Placement.info");
+            var placementPath = HostingEnvironment.MapPath(extensionFolder + "/" + extensionDescriptor.Id + "/" + DirPrefix + "Placement.info");
             var placementText = placementPath != null && File.Exists(placementPath) ? File.ReadAllText(placementPath) : File.ReadAllText(_templatePath + "Placement.txt");
             var itemGroupReference = string.Format("    <Place {0}=\"Content:before\"/>\r\n", replacements["PartShapeName"]);
             placementText = placementText.Insert(placementText.LastIndexOf("</Placement>"), itemGroupReference);
@@ -156,6 +203,19 @@ namespace Szmyd.CodeGeneration.Commands
             }
 
             Context.Output.WriteLine(T("Content part {0} created successfully in module {1}", partName, moduleName));
+        }
+
+        class DriverPropertySettings {
+            public static string GetPropertyValueImporting(string propertyType) {
+                string pType = propertyType.ToLower();
+
+                if (pType == "string") { return "value"; }
+                else if (pType == "int" || pType == "int?") { return "System.Convert.ToInt32(value)"; }
+                else if (pType == "decimal" || pType == "decimal?") { return "System.Convert.ToDecimal(value)"; }
+                else {
+                    throw new Exception(string.Format(@"CodeGeneration for Driver property Importing doesn't yet support Type: '{0}'. ", propertyType));
+                }
+            }
         }
 
         [CommandHelp("codegen typesettings <module-name> <part-name> [/Properties:<list>]\r\n\t"
@@ -215,8 +275,8 @@ namespace Szmyd.CodeGeneration.Commands
                 kv.Value.Name = replacements.Aggregate(kv.Value.Name,
                     (current, s) => current.Replace(String.Format("$${0}$$", s.Key), s.Value));
 
-                var dirPath = HostingEnvironment.MapPath(extensionFolder + "/" + extensionDescriptor.Id + "/" + kv.Value.Dir);
-                var filePath = HostingEnvironment.MapPath(extensionFolder + "/" + extensionDescriptor.Id + "/" + kv.Value.Dir + kv.Value.Name);
+                var dirPath = HostingEnvironment.MapPath(extensionFolder + "/" + extensionDescriptor.Id + "/" + DirPrefix + kv.Value.Dir);
+                var filePath = HostingEnvironment.MapPath(extensionFolder + "/" + extensionDescriptor.Id + "/" + DirPrefix + kv.Value.Dir + kv.Value.Name);
                 if (!Directory.Exists(dirPath)) Directory.CreateDirectory(dirPath);
                 if (File.Exists(filePath))
                     throw new OrchardException(T("{2} for {0} already exists in target module {1}.",
@@ -227,7 +287,7 @@ namespace Szmyd.CodeGeneration.Commands
             // Generating files from templates
             foreach (var kv in _settingsFilesInfo)
             {
-                var outputPath = HostingEnvironment.MapPath(extensionFolder + "/" + extensionDescriptor.Id + "/" + kv.Value.Dir + kv.Value.Name);
+                var outputPath = HostingEnvironment.MapPath(extensionFolder + "/" + extensionDescriptor.Id + "/" + DirPrefix + kv.Value.Dir + kv.Value.Name);
                 FillTemplateAndCreateFile(kv.Key, outputPath, replacements);
                 AddToModuleProject(kv.Value.Dir + kv.Value.Name, csProjPath, kv.Value.IsCompiled);
                 Context.Output.WriteLine(T("{1} for {0} created successfully", partName, kv.Key));
@@ -236,11 +296,12 @@ namespace Szmyd.CodeGeneration.Commands
             Context.Output.WriteLine(T("Content part {0} type settings created successfully in module {1}", partName, moduleName));
         }
 
-        private static void FillTemplateAndCreateFile(string templateName, string outputPath, IEnumerable<KeyValuePair<string, string>> replacements)
-        {
+
+        private static void FillTemplateAndCreateFile(string templateName, string outputPath, IEnumerable<KeyValuePair<string, string>> replacements) {
             var data = FillTemplate(templateName, replacements);
             File.WriteAllText(outputPath, data);
         }
+
 
         private static string FillTemplate(string templateName, IEnumerable<KeyValuePair<string, string>> replacements)
         {
@@ -248,6 +309,7 @@ namespace Szmyd.CodeGeneration.Commands
             data = replacements.Aggregate(data, (current, s) => current.Replace(String.Format("$${0}$$", s.Key), s.Value));
             return data;
         }
+
 
         private void AddToModuleProject(string relPath, string csProjPath, bool isCompiled)
         {

@@ -1,0 +1,12 @@
+﻿using Orchard;
+using Orchard.ContentManagement;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using $$ModuleName$$.Models; 
+
+namespace $$ModuleName$$.ViewModels {
+	$$PartFeatureAttribute$$
+    public class $$EditViewModelName$$ : ContentPart<$$PartName$$Record> {
+$$PartRecordProperties$$
+    }
+}

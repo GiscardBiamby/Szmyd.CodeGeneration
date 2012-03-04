@@ -1,6 +1,5 @@
 ﻿using Orchard;
 using Orchard.ContentManagement.Records;
-using Orchard.Environment.Extensions;
 
 namespace $$ModuleName$$.Models {
 	$$PartFeatureAttribute$$

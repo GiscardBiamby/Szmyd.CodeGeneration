@@ -1,0 +1,2 @@
+﻿			
+			context.Element(partName).SetAttributeValue("$$PropertyName$$", part.$$PropertyName$$);

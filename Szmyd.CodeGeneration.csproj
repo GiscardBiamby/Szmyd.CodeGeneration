@@ -59,6 +59,11 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Templates\PartDriverEditorMapViewModelProperty.txt" />
+    <Content Include="Templates\PartDriverBuildViewModelProperty.txt" />
+    <Content Include="Templates\PartDriverExportingProperty.txt" />
+    <Content Include="Templates\PartDriverImportingProperty.txt" />
+    <Content Include="Templates\PartViewModel.txt" />
     <Content Include="Templates\TypePartEditorShape.txt" />
     <Content Include="Templates\TypePartEditorShapeFormField.txt" />
     <Content Include="Templates\TypePartBuilderSetting.txt" />

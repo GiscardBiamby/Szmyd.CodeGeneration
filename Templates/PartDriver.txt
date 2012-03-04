@@ -1,52 +1,104 @@
-﻿
+﻿using System; 
+using System.Collections.Generic;
+using System.Linq;
+using JetBrains.Annotations;
+using Orchard;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Drivers;
+using Orchard.ContentManagement.Handlers;
+using Orchard.Data;
 using Orchard.Localization;
 using Orchard.UI.Notify;
-using Orchard.Environment.Extensions;
 using $$ModuleName$$.Models;
+using $$ModuleName$$.ViewModels;
 
-namespace $$ModuleName$$.Drivers
-{
-    
+
+namespace $$ModuleName$$.Drivers {
+    [UsedImplicitly]
 	$$PartFeatureAttribute$$
-    public class $$PartName$$Driver : ContentPartDriver<$$PartName$$>
-    {
+    public class $$PartName$$Driver : ContentPartDriver<$$PartName$$> {
         private readonly INotifier _notifier;
-        private const string TemplateName = "Parts/$$PartShapeFileName$$";
+        private const string TemplateName = "Parts/$$PartShapeFileName$$.Edit";
 
         public Localizer T { get; set; }
 
-        public $$PartName$$Driver(INotifier notifier)
-        {
+
+        public $$PartName$$Driver(INotifier notifier) {
             _notifier = notifier;
             T = NullLocalizer.Instance;
         }
 
-        protected override DriverResult Display($$PartName$$ part, string displayType, dynamic shapeHelper)
-        {
-            return ContentShape("$$PartShapeName$$",
-                () => shapeHelper.$$PartShapeName$$(ContentItem: part.ContentItem));
-        }
 
-        protected override DriverResult Editor($$PartName$$ part, dynamic shapeHelper)
-        {
-            return ContentShape("$$PartShapeName$$",
-                    () => shapeHelper.EditorTemplate(TemplateName: TemplateName, Model: part, Prefix: Prefix));
-        }
-
-        protected override DriverResult Editor($$PartName$$ part, IUpdateModel updater, dynamic shapeHelper)
-        {
-            if (updater.TryUpdateModel(part, Prefix, null, null))
-            {
-                _notifier.Information(T("$$PartName$$ edited successfully"));
+        protected override DriverResult Display($$PartName$$ part, string displayType, dynamic shapeHelper) {
+		
+            if (displayType.Equals("Summary", StringComparison.OrdinalIgnoreCase)) {
+				return ContentShape(
+					"$$PartShapeName$$_Summary"
+					, () => shapeHelper.$$PartShapeName$$(ContentItem: part.ContentItem)
+				);
             }
-            else
-            {
+            else if (displayType.Equals("SummaryAdmin", StringComparison.OrdinalIgnoreCase)) {
+				return ContentShape(
+					"$$PartShapeName$$_SummaryAdmin"
+					, () => shapeHelper.$$PartShapeName$$(
+						ContentItem: part.ContentItem
+					)
+				);
+            }
+            else {
+				return ContentShape(
+					"$$PartShapeName$$"
+					, () => shapeHelper.$$PartShapeName$$(
+						ContentItem: part.ContentItem
+					)
+				);
+			}
+        }
+
+
+        protected override DriverResult Editor($$PartName$$ part, dynamic shapeHelper) {
+            return ContentShape(
+				"$$PartShapeName$$"
+                , () => shapeHelper.EditorTemplate(
+					TemplateName: TemplateName
+					, Model: BuildViewModel(part)
+					, Prefix: Prefix
+				)
+			);
+        }
+
+
+        protected override DriverResult Editor($$PartName$$ part, IUpdateModel updater, dynamic shapeHelper) {
+			var vm = new $$EditViewModelName$$(); 
+            
+			if (updater.TryUpdateModel(vm, Prefix, null, null)) {
+                _notifier.Information(T("$$PartName$$ edited successfully"));
+$$PartDriverEditorMapViewModelProperties$$
+            }
+            else {
                 _notifier.Error(T("Error during $$PartName$$ update!"));
             }
+
             return Editor(part, shapeHelper);
         }
 
+
+        private $$EditViewModelName$$ BuildViewModel($$PartName$$ part) {
+            return new $$EditViewModelName$$ {
+$$PartDriverBuildViewModelProperties$$
+            };
+        }
+
+
+        protected override void Importing($$PartName$$ part, ImportContentContext context) {
+            string partName = part.PartDefinition.Name;
+$$PartDriverPropertiesImporting$$
+        }
+
+		
+        protected override void Exporting($$PartName$$ part, ExportContentContext context) {
+			string partName = part.PartDefinition.Name;
+$$PartDriverPropertiesExporting$$
+		}
     }
 }
