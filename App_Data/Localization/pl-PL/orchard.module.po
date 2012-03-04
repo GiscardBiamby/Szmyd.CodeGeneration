@@ -1,0 +1,96 @@
+# Untranslated string
+#: ~/Modules/Szmyd.CodeGeneration/Module.txt
+#| msgid "Name"
+msgid "Code Generation Extensions"
+msgstr ""
+
+# Untranslated string
+#: ~/Modules/Szmyd.CodeGeneration/Module.txt
+#| msgid "Author"
+msgid "Piotr Szmyd"
+msgstr ""
+
+# Untranslated string
+#: ~/Modules/Szmyd.CodeGeneration/Module.txt
+#| msgid "Website"
+msgid "http://www.szmyd.com.pl"
+msgstr ""
+
+# Untranslated string
+#: ~/Modules/Szmyd.CodeGeneration/Module.txt
+#| msgid "Description"
+msgid "Tools providing additional code generation features."
+msgstr ""
+
+# Untranslated string
+#: Szmyd.CodeGeneration.Commands.CodeGenerationCommands
+#| msgid "Creating content part {0} in module {1}"
+msgid "Creating content part {0} in module {1}"
+msgstr ""
+
+# Untranslated string
+#: Szmyd.CodeGeneration.Commands.CodeGenerationCommands
+#| msgid "Creating content part {0} failed: target module {1} could not be found."
+msgid "Creating content part {0} failed: target module {1} could not be found."
+msgstr ""
+
+# Untranslated string
+#: Szmyd.CodeGeneration.Commands.CodeGenerationCommands
+#| msgid "Creating content part {0} failed: Incorrect properties definition."
+msgid "Creating content part {0} failed: Incorrect properties definition."
+msgstr ""
+
+# Untranslated string
+#: Szmyd.CodeGeneration.Commands.CodeGenerationCommands
+#| msgid "{2} for {0} already exists in target module {1}."
+msgid "{2} for {0} already exists in target module {1}."
+msgstr ""
+
+# Untranslated string
+#: Szmyd.CodeGeneration.Commands.CodeGenerationCommands
+#| msgid "{1} for {0} created successfully"
+msgid "{1} for {0} created successfully"
+msgstr ""
+
+# Untranslated string
+#: Szmyd.CodeGeneration.Commands.CodeGenerationCommands
+#| msgid "Content part {0} created successfully in module {1}"
+msgid "Content part {0} created successfully in module {1}"
+msgstr ""
+
+# Untranslated string
+#: Szmyd.CodeGeneration.Commands.CodeGenerationCommands
+#| msgid "Creating content part {0} type settings in module {1}"
+msgid "Creating content part {0} type settings in module {1}"
+msgstr ""
+
+# Untranslated string
+#: Szmyd.CodeGeneration.Commands.CodeGenerationCommands
+#| msgid "Creating content part {0} type settings failed: target module {1} could not be found."
+msgid "Creating content part {0} type settings failed: target module {1} could not be found."
+msgstr ""
+
+# Untranslated string
+#: Szmyd.CodeGeneration.Commands.CodeGenerationCommands
+#| msgid "Creating content part {0} type settings failed: Incorrect properties definition."
+msgid "Creating content part {0} type settings failed: Incorrect properties definition."
+msgstr ""
+
+# Untranslated string
+#: Szmyd.CodeGeneration.Commands.CodeGenerationCommands
+#| msgid "Content part {0} type settings created successfully in module {1}"
+msgid "Content part {0} type settings created successfully in module {1}"
+msgstr ""
+
+# Untranslated string
+#: Szmyd.CodeGeneration.Commands.CodeGenerationCommands
+#| msgid "Warning: Solution file could not be found at {0}"
+msgid "Warning: Solution file could not be found at {0}"
+msgstr ""
+
+# Untranslated string
+#: Szmyd.CodeGeneration.Commands.CodeGenerationCommands
+#| msgid "An unexpected error occured while trying to refresh the Visual Studio solution. Please reload it."
+msgid "An unexpected error occured while trying to refresh the Visual Studio solution. Please reload it."
+msgstr ""
+
