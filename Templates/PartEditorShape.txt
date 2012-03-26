@@ -1,4 +1,4 @@
-﻿@model $$ModuleName$$.Models.$$PartName$$
+﻿@model $$ModuleName$$.ViewModels.$$EditViewModelName$$
 @using Orchard.ContentManagement;
 
 @{ Layout.Title = T("Edit $$PartName$$").ToString(); }

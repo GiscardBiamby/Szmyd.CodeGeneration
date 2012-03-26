@@ -7,6 +7,6 @@ using $$ModuleName$$.Models;
 namespace $$ModuleName$$.ViewModels {
 	$$PartFeatureAttribute$$
     public class $$EditViewModelName$$ {
-$$PartRecordProperties$$
+$$PartViewModelProperties$$
     }
 }

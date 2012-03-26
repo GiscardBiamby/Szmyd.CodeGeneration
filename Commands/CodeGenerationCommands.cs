@@ -144,6 +144,10 @@ namespace Szmyd.CodeGeneration.Commands
                             , new Dictionary<string, string> { { "PropertyName", s.Key }, { "PropertyType", s.Value }}
                         )
                 );
+                var viewModelProps = properties.Aggregate(""
+                    , (current, s) =>
+                        current + FillTemplate("PartViewModelProperty", new Dictionary<string, string> { { "PropertyName", s.Key }, { "PropertyType", s.Value } })
+                );
 
                 replacements.Add("PartModelProperties", modelProps);
                 replacements.Add("PartRecordProperties", recordProps);
@@ -152,6 +156,7 @@ namespace Szmyd.CodeGeneration.Commands
                 replacements.Add("PartDriverPropertiesExporting", driverExportingProps);
                 replacements.Add("PartDriverBuildViewModelProperties", driverBuildVMProps);
                 replacements.Add("PartDriverEditorMapViewModelProperties", driverEditorMapVMProps);
+                replacements.Add("PartViewModelProperties", viewModelProps);
             }
             catch (Exception)
             {
