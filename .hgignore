@@ -1,3 +1,9 @@
 syntax: glob
 obj/*
 Szmyd.CodeGeneration.csproj.user
+bin/Szmyd.CodeGeneration.pdb
+bin/Szmyd.CodeGeneration.dll
+bin/Orchard.Framework.pdb
+bin/Orchard.Framework.dll
+bin/Orchard.Core.pdb
+bin/Orchard.Core.dll
