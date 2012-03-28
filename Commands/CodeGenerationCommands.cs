@@ -23,6 +23,8 @@ namespace Szmyd.CodeGeneration.Commands
             {"PartViewModel",   new TemplateInfo {Name = "Edit$$PartName$$ViewModel.cs", Dir = "ViewModels/", IsCompiled = true}},
             {"PartRecord",      new TemplateInfo {Name = "$$PartName$$Record.cs", Dir = "Models/", IsCompiled = true}},
             {"PartDisplayShape",new TemplateInfo {Name = "$$PartShapeFileName$$.cshtml", Dir = "Views/Parts/", IsCompiled = false}},
+            {"PartDisplayShapeSummary",new TemplateInfo {Name = "$$PartShapeFileName$$.Summary.cshtml", Dir = "Views/Parts/", IsCompiled = false}},
+            {"PartDisplayShapeSummaryAdmin",new TemplateInfo {Name = "$$PartShapeFileName$$.SummaryAdmin.cshtml", Dir = "Views/Parts/", IsCompiled = false}},
             {"PartEditorShape", new TemplateInfo {Name = "$$PartShapeFileName$$.Edit.cshtml", Dir = "Views/EditorTemplates/Parts/", IsCompiled = false}}
         };
 
