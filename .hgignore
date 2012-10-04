@@ -8,3 +8,4 @@ bin/Orchard.Framework.dll
 bin/Orchard.Core.pdb
 bin/Orchard.Core.dll
 bin/*
+Bin/*
